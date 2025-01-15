@@ -3,10 +3,12 @@ import { SignUpAuthDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 import { PaginationDto } from 'src/constants/paginationDto/pagination.dto';
+import { SearchDto } from 'src/constants/paginationDto/search.dto';
+import { FilterDto } from 'src/constants/paginationDto/filter.dto';
 
 @Injectable()
 export class UsersService {
@@ -19,32 +21,60 @@ export class UsersService {
     await this.redis.set(newUser.id, JSON.stringify(newUser));
     return newUser;
   }
-  async findAll(paginationDto: PaginationDto) {
-    const cachedData = await this.redis.keys('*');
-    if (cachedData.length > 0) {
-      const { page = 1, limit = 5 } = paginationDto;
-      const skip = (page - 1) * limit;
-      const [data, total] = await this.userRepository.findAndCount({
-        skip,
-        take: limit,
-      });
+  async findAll(
+    paginationDto: PaginationDto,
+    searchDto: SearchDto,
+    filterDto: FilterDto,
+  ) {
+    const { page = 1, limit = 5 } = paginationDto;
+    const { search } = searchDto;
+    const { category, priceMin, priceMax } = filterDto;
+
+    const redisKey = `products:${page}:${limit}:${search || ''}:${category || ''}:${priceMin || ''}:${priceMax || ''}`;
+    const cachedData = await this.redis.get(redisKey);
+    if (cachedData) {
+      console.log('Returning data from Redis');
+      return JSON.parse(cachedData);
+    } else {
+      const queryBuilder = this.userRepository.createQueryBuilder('users');
+
+      if (search) {
+        queryBuilder.where('users.name ILIKE :search', {
+          search: `%${search}%`,
+        });
+      }
+
+      if (category) {
+        queryBuilder.andWhere('users.category = :category', {
+          category,
+        });
+      }
+      const [data, total] = await queryBuilder
+        .skip((page - 1) * limit)
+        .take(limit)
+        .getManyAndCount();
+
+      if (data.length === 0) {
+        throw new NotFoundException('Users not found');
+      }
+
+      console.log('Storing data in Redis');
+      await this.redis.set(
+        redisKey,
+        JSON.stringify({ data, total, page, limit }),
+        'EX',
+        3600,
+      );
+
       return {
         data,
         total,
-        limit,
         page,
+        limit,
       };
-    } else {
-      const allUser = await this.userRepository.find();
-      if (allUser.length == 0) {
-        throw new NotFoundException('Data not found');
-      }
-      allUser.forEach(async (user) => {
-        await this.redis.set(user.id, JSON.stringify(user));
-      });
-      return allUser;
     }
   }
+
   async findOne(id: string) {
     const cachedData = await this.redis.get(id);
     if (cachedData) {

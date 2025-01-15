@@ -12,6 +12,8 @@ import { UsersService } from './users.service';
 import { SignUpAuthDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from 'src/constants/paginationDto/pagination.dto';
+import { SearchDto } from 'src/constants/paginationDto/search.dto';
+import { FilterDto } from 'src/constants/paginationDto/filter.dto';
 
 @Controller('users')
 export class UsersController {
@@ -21,10 +23,13 @@ export class UsersController {
   async create(@Body() createUserDto: SignUpAuthDto) {
     return await this.usersService.create(createUserDto);
   }
-
   @Get()
-  async findAll(@Query() paginationDto: PaginationDto) {
-    return await this.usersService.findAll(paginationDto);
+  async findAll(
+    @Query() paginationDto: PaginationDto,
+    @Query() searchDto: SearchDto,
+    @Query() filterDto: FilterDto,
+  ) {
+    return await this.usersService.findAll(paginationDto, searchDto, filterDto);
   }
 
   @Get(':id')
