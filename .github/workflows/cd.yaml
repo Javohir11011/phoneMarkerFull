@@ -16,11 +16,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }} - ${{secrets.HOST}}
+      - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm i
+      - run: npm install
       - run: npm test
 
   deploy:
@@ -32,7 +32,6 @@ jobs:
 
       - name: Set up SSH key
         run: |
-          env
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
@@ -40,12 +39,22 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} <<'ENDSSH'
-          docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_TOKEN}}
-          docker pull ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:${{secrets.DOCKER_TAG}}
-          docker stop ${{secrets.CONTAINER}}
-          docker rm ${{secrets.CONTAINER}}
-          docker run -p 27018:27017 -d --name=authminiproject-mongo-db-1 mongo:latest
-          docker run -p 8181:4000 -d --name=${{secrets.CONTAINER}} ${{secrets.DOCKER_USERNAME}}/${{secrets.DOCKER_REPO}}:${{secrets.DOCKER_TAG}}
-          docker logout ${{secrets.DOCKER_REPO}}
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} <<'ENDSSH'
+          set -e
+          echo "Navigating to application directory..."
+          cd ${{ secrets.APP_PATH }} || { echo "Directory not found!"; exit 1; }
+
+          echo "Pulling latest changes..."
+          git pull || { echo "Git pull failed!"; exit 1; }
+
+          echo "Installing dependencies..."
+          npm install pnpm -g || { echo "Failed to install pnpm!"; exit 1; }
+          pnpm install || { echo "Dependency installation failed!"; exit 1; }
+
+          echo "Restarting Docker services..."
+          docker compose down || { echo "Failed to stop Docker services!"; exit 1; }
+          docker compose up -d || { echo "Failed to start Docker services!"; exit 1; }
+
+          echo "Restarting application with PM2..."
+          npx pm2 restart ${{ secrets.APP_NAME }} || { echo "PM2 restart failed!"; exit 1; }
           ENDSSH
