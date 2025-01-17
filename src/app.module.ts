@@ -12,7 +12,7 @@ import { TodoModule } from './todo/todo.module';
   imports: [
     RedisModule.forRoot({
       type: 'single',
-      url: 'redis://localhost:6379',
+      url: 'redis://localhost:6390',
     }),
     AuthModule,
     UsersModule,
