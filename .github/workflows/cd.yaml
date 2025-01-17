@@ -46,7 +46,7 @@ jobs:
 
           echo "Pulling latest changes..."
           git pull || { echo "Git pull failed!"; exit 1; }
-
+          pwd
           echo "Installing dependencies..."
           npm install || { echo "Dependency installation failed!"; exit 1; }
 
@@ -56,6 +56,5 @@ jobs:
           echo "Restarting Docker services..."
           docker compose down || { echo "Failed to stop Docker services!"; exit 1; }
           docker compose up -d || { echo "Failed to start Docker services!"; exit 1; }
-
 
           ENDSSH
