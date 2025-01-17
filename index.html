@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Websocket</title>
+  </head>
+  <body>
+    <h1>Chat application</h1>
+    <div id="chat"></div>
+    <br />
+    <input type="text" id="message" />
+    <button id="send">Send</button>
+    <script>
+      const chat = document.getElementById('chat');
+      const message = document.getElementById('message');
+      const send = document.getElementById('send');
+      const ws = new WebSocket('wss://c5d5-89-236-218-41.ngrok-free.app ');
+
+      ws.onopen = () => {
+        console.log('Connected to the server');
+      };
+
+      ws.onmessage = (event) => {
+        const p = document.createElement('p');
+        p.innerText = event.data;
+        chat.appendChild(p);
+      };
+
+      send.onclick = () => {
+        ws.send(message.value);
+        message.value = '';
+      };
+    </script>
+  </body>
+</html>

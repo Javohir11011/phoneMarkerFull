@@ -7,11 +7,12 @@ import { OrderProductModule } from './order_product/order_product.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { TodoModule } from './todo/todo.module';
 @Module({
   imports: [
     RedisModule.forRoot({
       type: 'single',
-      url: 'redis://localhost:6379',
+      url: 'redis://localhost:6390',
     }),
     AuthModule,
     UsersModule,
@@ -33,6 +34,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    TodoModule,
   ],
 })
 export class AppModule {}

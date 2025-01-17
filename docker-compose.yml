@@ -17,14 +17,14 @@ services:
       - POSGRES_DB=postgres
       - POSTGRES_USER=postgres
     ports:
-      - '5435:5432'
+      - '5440:5432'
     networks:
       - postgres
 
   redis:
     image: redis
     ports:
-      - '6379:6379'
+      - '6390:6379'
 networks:
   postgres:
     driver: bridge
