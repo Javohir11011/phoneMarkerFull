@@ -60,3 +60,4 @@ jobs:
           # echo "Restarting application with PM2..."
           # npx pm2 restart ${{ secrets.APP_NAME }} || { echo "PM2 restart failed!"; exit 1; }
           ENDSSH
+# 
