@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { TodoModule } from './todo/todo.module';
+import { PrismaService } from './prisma/prisma.service';
 @Module({
   imports: [
     RedisModule.forRoot({
@@ -36,5 +37,6 @@ import { TodoModule } from './todo/todo.module';
     }),
     TodoModule,
   ],
+  providers: [PrismaService],
 })
 export class AppModule {}
