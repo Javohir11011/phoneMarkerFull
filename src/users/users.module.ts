@@ -7,6 +7,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EmailConfig } from '../configs/email';
 import { PaginationDto } from 'src/constants/paginationDto/pagination.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { PaginationDto } from 'src/constants/paginationDto/pagination.dto';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, PrismaService],
   exports: [UsersService],
 })
 export class UsersModule {}

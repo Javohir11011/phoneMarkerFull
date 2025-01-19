@@ -27,7 +27,7 @@ model users {
   email         String  @unique
   password      String
   phone_number  String  @unique
-  isActive      Boolean @default(false)
+  is_active     Boolean @default(false)
   role          Role    @default(USER)
   refresh_token String?
   orders        order[]

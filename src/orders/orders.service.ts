@@ -7,8 +7,6 @@ import { Repository } from 'typeorm';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 import { PaginationDto } from 'src/constants/paginationDto/pagination.dto';
-import { SearchDto } from 'src/constants/paginationDto/search.dto';
-import { FilterDto } from 'src/constants/paginationDto/filter.dto';
 
 @Injectable()
 export class OrdersService {
@@ -26,70 +24,18 @@ export class OrdersService {
     };
   }
 
-  async findAll(
-    paginationDto: PaginationDto,
-    searchDto: SearchDto,
-    filterDto: FilterDto,
-  ) {
+  async findAll(paginationDto: PaginationDto) {
     const { page = 1, limit = 5 } = paginationDto;
-    const { search } = searchDto;
-    const { category, priceMin, priceMax } = filterDto;
-
-    const redisKey = `products:${page}:${limit}:${search || ''}:${category || ''}:${priceMin || ''}:${priceMax || ''}`;
-    const cachedData = await this.redis.get(redisKey);
-    if (cachedData) {
-      console.log('Returning data from Redis');
-      return JSON.parse(cachedData);
-    } else {
-      const queryBuilder = this.orderRepository.createQueryBuilder('orders');
-
-      if (search) {
-        queryBuilder.where('order.name ILIKE :search', {
-          search: `%${search}%`,
-        });
-      }
-
-      if (category) {
-        queryBuilder.andWhere('order.category = :category', {
-          category,
-        });
-      }
-
-      if (priceMin) {
-        queryBuilder.andWhere('order.price >= :priceMin', {
-          priceMin,
-        });
-      }
-
-      if (priceMax) {
-        queryBuilder.andWhere('order.price <= :priceMax', {
-          priceMax,
-        });
-      }
-      const [data, total] = await queryBuilder
-        .skip((page - 1) * limit)
-        .take(limit)
-        .getManyAndCount();
-
-      if (data.length === 0) {
-        throw new NotFoundException('Products not found');
-      }
-
-      console.log('Storing data in Redis');
-      await this.redis.set(
-        redisKey,
-        JSON.stringify({ data, total, page, limit }),
-        'EX',
-        3600,
-      );
-
-      return {
-        data,
-        total,
-        page,
-        limit,
-      };
-    }
+    const [data, total] = await this.orderRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return {
+      data,
+      total,
+      limit,
+      page,
+    };
   }
 
   async findOne(id: string) {

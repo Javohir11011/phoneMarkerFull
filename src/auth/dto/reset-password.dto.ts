@@ -6,5 +6,8 @@ export class ResetPasswordAuthDto {
   email: string;
   @IsStrongPassword()
   @ApiProperty({ example: 'Wasf@adse3' })
+  oldPassword: string;
+  @IsStrongPassword()
+  @ApiProperty({ example: 'qwetwe' })
   password: string;
 }

@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OTP } from './entities/otp.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from '../constants/jwt.constant';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -18,6 +19,6 @@ import { jwtConstants } from '../constants/jwt.constant';
     TypeOrmModule.forFeature([OTP]),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, PrismaService],
 })
 export class AuthModule {}

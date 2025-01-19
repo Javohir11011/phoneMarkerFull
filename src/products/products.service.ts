@@ -1,59 +1,56 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRedis } from '@nestjs-modules/ioredis';
-import Redis from 'ioredis';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { PaginationDto } from 'src/constants/paginationDto/pagination.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(
-    @InjectRedis() private readonly redis: Redis,
-    private readonly prisma: PrismaService,
-  ) {}
-
-  async create(createProductDto: Prisma.ProductCreateInput) {
-    const newProduct = await this.prisma.product.create({
+  constructor(private readonly productService: PrismaService) {}
+  async create(createProductDto: Prisma.productCreateInput) {
+    return await this.productService.product.create({
       data: createProductDto,
     });
-    await this.redis.set(newProduct.id, JSON.stringify(newProduct), 'EX', 3600); // Set TTL for 1 hour
-    return {
-      message: 'Product successfully added',
-      productId: newProduct.id,
-    };
   }
 
-  async findAll() {
-    const products = await this.prisma.product.findMany();
-    return products;
+  async findAll(paginationDto: PaginationDto) {
+    const { page = 1, limit = 10 } = paginationDto;
+    return await this.productService.product.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
   }
 
   async findOne(id: string) {
-    const getProduct = await this.prisma.product.findUnique({ where: { id } });
-    return {
-      message: 'One Product',
-      product: getProduct,
-    };
+    const product = await this.productService.product.findUnique({
+      where: { id },
+    });
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+    return product;
   }
 
-  async update(id: string, updateProductDto: Prisma.ProductUpdateInput) {
-    const product = await this.prisma.product.update({
+  async update(id: string, updateProductDto: Prisma.productUpdateInput) {
+    const product = await this.productService.product.update({
       where: { id },
       data: updateProductDto,
     });
-
-    return {
-      message: 'Product updated successfully',
-      productId: id,
-      product,
-    };
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+    return product;
   }
 
   async remove(id: string) {
-    await this.prisma.product.delete({ where: { id } });
-
+    const product = await this.productService.product.delete({
+      where: { id },
+    });
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
     return {
       message: 'Product deleted successfully',
-      productId: id,
+      productId: product.id,
     };
   }
 }

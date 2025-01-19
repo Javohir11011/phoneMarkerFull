@@ -1,41 +1,8 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Order_Product` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Oreder` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Product` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'SuperAdmin');
 
 -- CreateEnum
 CREATE TYPE "OrderStatus" AS ENUM ('Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled');
-
--- DropForeignKey
-ALTER TABLE "Order_Product" DROP CONSTRAINT "Order_Product_orderId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Order_Product" DROP CONSTRAINT "Order_Product_productId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Oreder" DROP CONSTRAINT "Oreder_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "Product" DROP CONSTRAINT "Product_userId_fkey";
-
--- DropTable
-DROP TABLE "Order_Product";
-
--- DropTable
-DROP TABLE "Oreder";
-
--- DropTable
-DROP TABLE "Product";
-
--- DropTable
-DROP TABLE "User";
 
 -- CreateTable
 CREATE TABLE "otp" (
@@ -54,7 +21,7 @@ CREATE TABLE "users" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "phone_number" TEXT NOT NULL,
-    "isActive" BOOLEAN NOT NULL DEFAULT false,
+    "is_active" BOOLEAN NOT NULL DEFAULT false,
     "role" "Role" NOT NULL DEFAULT 'USER',
     "refresh_token" TEXT,
 

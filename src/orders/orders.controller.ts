@@ -12,8 +12,6 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PaginationDto } from 'src/constants/paginationDto/pagination.dto';
-import { SearchDto } from 'src/constants/paginationDto/search.dto';
-import { FilterDto } from 'src/constants/paginationDto/filter.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -25,16 +23,8 @@ export class OrdersController {
   }
 
   @Get()
-  async findAll(
-    @Query() paginationDto: PaginationDto,
-    @Query() searchDto: SearchDto,
-    @Query() filterDto: FilterDto,
-  ) {
-    return await this.ordersService.findAll(
-      paginationDto,
-      searchDto,
-      filterDto,
-    );
+  async findAll(@Query() paginationDto: PaginationDto) {
+    return await this.ordersService.findAll(paginationDto);
   }
 
   @Get(':id')

@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Orders } from '../../orders/entities/order.entity';
-import { Products } from '../../products/entities/product.entity';
+import { Products } from 'src/products/entities/product.entity';
 
 @Entity()
 export class OrderProducts {

@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 export class CreateProductDto {
   @IsString()
@@ -14,6 +14,7 @@ export class CreateProductDto {
   info: string;
 
   @IsBoolean()
+  @IsOptional()
   @ApiProperty({ example: true })
   is_active: boolean;
 

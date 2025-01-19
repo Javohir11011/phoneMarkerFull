@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpAuthDto } from '../users/dto/create-user.dto';
 import { SignInAuthDto } from './dto/signin-auth.dto';
+import { ResetPasswordAuthDto } from './dto/reset-password.dto';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -10,7 +11,6 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
-import { ResetPasswordAuthDto } from './dto/forget-password.dto';
 import { OtpVerifyAuthDto } from './dto/otp-verificatiion.dto';
 
 @Controller('auth')
