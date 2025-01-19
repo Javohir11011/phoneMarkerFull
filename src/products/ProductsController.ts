@@ -6,14 +6,10 @@ import {
   Param,
   Delete,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { PaginationDto } from 'src/constants/paginationDto/pagination.dto';
-import { SearchDto } from 'src/constants/paginationDto/search.dto';
-import { FilterDto } from 'src/constants/paginationDto/filter.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -24,16 +20,8 @@ export class ProductsController {
     return await this.productsService.create(createProductDto);
   }
   @Get()
-  async findAll(
-    @Query() paginationDto: PaginationDto,
-    @Query() searchDto: SearchDto,
-    @Query() filterDto: FilterDto,
-  ) {
-    return await this.productsService.findAll(
-      paginationDto,
-      searchDto,
-      filterDto,
-    );
+  async findAll() {
+    return await this.productsService.findAll();
   }
 
   @Get(':id')

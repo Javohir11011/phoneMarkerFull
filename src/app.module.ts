@@ -7,7 +7,6 @@ import { OrderProductModule } from './order_product/order_product.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RedisModule } from '@nestjs-modules/ioredis';
-import { TodoModule } from './todo/todo.module';
 import { PrismaService } from './prisma/prisma.service';
 @Module({
   imports: [
@@ -35,7 +34,6 @@ import { PrismaService } from './prisma/prisma.service';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    TodoModule,
   ],
   providers: [PrismaService],
 })
