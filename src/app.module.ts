@@ -12,7 +12,7 @@ import { PrismaService } from './prisma/prisma.service';
   imports: [
     RedisModule.forRoot({
       type: 'single',
-      url: 'redis://localhost:6379',
+      url: 'redis://localhost:6385',
     }),
     AuthModule,
     UsersModule,
