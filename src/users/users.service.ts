@@ -61,7 +61,7 @@ export class UsersService {
     }
     await this.prisma.users.update({
       where: { email: email },
-      data: { is_active: true },
+      data: { isActive: true },
     });
     await this.redis.set(
       email,

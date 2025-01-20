@@ -27,7 +27,7 @@ model users {
   email         String  @unique
   password      String
   phone_number  String  @unique
-  is_active     Boolean @default(false)
+  isActive     Boolean @default(false)
   role          Role    @default(USER)
   refresh_token String?
   orders        order[]
@@ -48,7 +48,7 @@ model product {
   name          String
   price         Decimal
   info          String
-  is_active     Boolean          @default(false)
+  isActive     Boolean          @default(false)
   quantity      Int
   orderProducts order_products[]
 }

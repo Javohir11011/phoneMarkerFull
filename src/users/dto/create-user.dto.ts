@@ -17,7 +17,7 @@ export class SignUpAuthDto {
   email: string;
 
   @ApiProperty({ example: true })
-  is_active: boolean = false;
+  isActive: boolean = false;
 
   @IsStrongPassword()
   @MaxLength(50)

@@ -22,7 +22,7 @@ export class Products {
 
   @Column({ type: 'boolean', default: true })
   @ApiProperty({ example: true })
-  is_active: boolean;
+  isActive: boolean;
 
   @Column({ type: 'integer' })
   @ApiProperty({ example: 4 })

@@ -16,7 +16,7 @@ export class CreateProductDto {
   @IsBoolean()
   @IsOptional()
   @ApiProperty({ example: true })
-  is_active: boolean;
+  isActive: boolean;
 
   @IsNumber()
   @ApiProperty({ example: 4 })
